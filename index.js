@@ -2,6 +2,14 @@
  * https://bretcameron.medium.com/how-to-build-a-web-scraper-using-javascript-11d7cd9f77f2
  * https://medium.com/@tommypang04/static-web-page-scraping-with-node-js-fd2f0a0d9c37
  * https://cheerio.js.org/classes/Element.html#next
+ *
+ * https://stackoverflow.com/questions/52225461/puppeteer-unable-to-run-on-heroku
+ * https://github.com/checkly/puppeteer-examples
+ * https://stackoverflow.com/questions/55678095/bypassing-captchas-with-headless-chrome-using-puppeteer
+ * 		https://github.com/intoli/user-agents
+ * 		https://brianchildress.co/modify-puppeteer-user-agent/
+ * https://stackoverflow.com/questions/55237748/how-to-get-text-inside-div-in-puppeteer
+ * https://stackoverflow.com/questions/52716109/puppeteer-page-waitfornavigation-timeout-error-handling
  */
 
 const express = require("express");
@@ -72,7 +80,7 @@ puppeteer.use(StealthPlugin());
 
 async function runPuppeteer(encodedUrl) {
 	const browser = await puppeteer.launch({
-		headless: true,
+		headless: process.env.NODE_ENV === "production",
 		args: ["--no-sandbox", "--disable-setuid-sandbox"],
 	});
 
