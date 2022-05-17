@@ -1,8 +1,19 @@
+/*
+ * https://bretcameron.medium.com/how-to-build-a-web-scraper-using-javascript-11d7cd9f77f2
+ * https://medium.com/@tommypang04/static-web-page-scraping-with-node-js-fd2f0a0d9c37
+ * https://cheerio.js.org/classes/Element.html#next
+ */
+
 const express = require("express");
 const app = express();
 
 app.get("/", function (req, res) {
 	res.send("hello from brandon");
+});
+
+app.get("/scrape/:addr", async function (req, res) {
+	const result = await runPuppeteer(`https://www.zillow.com/homes/${req.params.addr}`);
+	res.send(result);
 });
 
 app.get("/https:/*", async function (req, res) {
@@ -47,5 +58,47 @@ app.listen(process.env.PORT || 3000, function () {
 	console.log(`Example app listening on port ${process.env.PORT || 3000}!`);
 });
 
+// --- 2 ---
+
 const rp = require("request-promise");
 const cheerio = require("cheerio");
+
+const puppeteer = require("puppeteer-extra");
+const userAgent = require("user-agents");
+
+const StealthPlugin = require("puppeteer-extra-plugin-stealth");
+const res = require("express/lib/response");
+puppeteer.use(StealthPlugin());
+
+async function runPuppeteer(encodedUrl) {
+	const browser = await puppeteer.launch({ headless: false });
+
+	let triesRemaining = 5;
+
+	while (triesRemaining > 0) {
+		const page = await browser.newPage();
+
+		const ua = new userAgent();
+		await page.setUserAgent(ua.toString());
+
+		await page.goto(encodedUrl);
+
+		try {
+			const parent = await page.waitForSelector('span[data-testid="zestimate-text"]', { timeout: 3000 });
+
+			const zestimate = await parent.evaluate((el) => el.children[1].textContent);
+
+			await browser.close();
+
+			return zestimate;
+		} catch (error) {
+			console.log("Probably timed out");
+		}
+
+		triesRemaining--;
+	}
+
+	await browser.close();
+
+	return "?";
+}
