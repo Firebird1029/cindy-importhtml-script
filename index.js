@@ -20,7 +20,7 @@ const express = require("express");
 const app = express();
 
 const { default: PQueue } = require("p-queue");
-const queue = new PQueue({ concurrency: 1 });
+const queue = new PQueue({ concurrency: 3 });
 
 app.get("/", function (req, res) {
 	res.send("hello from brandon");
@@ -108,9 +108,10 @@ async function runPuppeteer(encodedUrl) {
 		await page.goto(encodedUrl);
 
 		try {
-			const parent = await page.waitForSelector('span[data-testid="zestimate-text"]', { timeout: 3000 });
+			const parent = await page.waitForSelector('span[data-testid="zestimate-text"]', { timeout: 500 });
 
 			const zestimate = await parent.evaluate((el) => el.children[1].textContent);
+			console.log("found!", zestimate);
 
 			await browser.close();
 
