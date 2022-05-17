@@ -17,7 +17,7 @@ app.get("/https:/*", async function (req, res) {
 			},
 		});
 
-		const doubleNum = $("span[data-testid='zestimate-text']").children().next().text();
+		const doubleNum = await $("span[data-testid='zestimate-text']").children().next().text();
 		const singleNum = doubleNum.substring(0, doubleNum.substring(1, doubleNum.length).indexOf("$") + 1);
 
 		console.log(singleNum);
