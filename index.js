@@ -10,21 +10,32 @@ app.get("/https:/*", async function (req, res) {
 	console.log(req.url.substring(1, req.url.length));
 
 	try {
-		const $ = await rp({
-			url: req.url.substring(1, req.url.length),
-			transform: function (html) {
-				return cheerio.load(html);
-			},
-		});
+		tries = 0;
+		let doubleNum, singleNum;
+		while (tries < 10) {
+			const $ = await rp({
+				url: req.url.substring(1, req.url.length),
+				transform: function (html) {
+					return cheerio.load(html);
+				},
+			});
 
-		const doubleNum = await $("span[data-testid='zestimate-text']").children().next().text();
-		const singleNum = doubleNum.substring(0, doubleNum.substring(1, doubleNum.length).indexOf("$") + 1);
+			doubleNum = await $("span[data-testid='zestimate-text']").children().next().text();
+			singleNum = doubleNum.substring(0, doubleNum.substring(1, doubleNum.length).indexOf("$") + 1);
 
-		console.log(singleNum);
+			console.log(doubleNum, singleNum);
+
+			if (!singleNum || singleNum === "") {
+				tries++;
+			} else {
+				tries = 100;
+			}
+		}
+
 		res.send(singleNum);
 	} catch (error) {
 		console.log(error);
-		res.send("error", eror);
+		res.send("error", error);
 	}
 });
 
