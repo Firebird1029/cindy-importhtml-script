@@ -17,8 +17,11 @@ app.get("/https:/*", async function (req, res) {
 			},
 		});
 
-		console.log($("span[data-testid='zestimate-text']").children().next().text());
-		res.send($("span[data-testid='zestimate-text']").children().next().text());
+		const doubleNum = $("span[data-testid='zestimate-text']").children().next().text();
+		const singleNum = doubleNum.substring(0, doubleNum.substring(1, doubleNum.length).indexOf("$") + 1);
+
+		console.log(singleNum);
+		res.send(singleNum);
 	} catch (error) {
 		console.log(error);
 		res.send("error", eror);
