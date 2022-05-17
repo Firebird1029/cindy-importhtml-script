@@ -27,7 +27,6 @@ app.get("/", function (req, res) {
 });
 
 async function queueScraper(url) {
-	console.log("starting scrape: " + url);
 	return queue.add(() => runPuppeteer(url));
 }
 
@@ -91,6 +90,8 @@ const res = require("express/lib/response");
 puppeteer.use(StealthPlugin());
 
 async function runPuppeteer(encodedUrl) {
+	console.log("starting scrape: " + encodedUrl);
+
 	const browser = await puppeteer.launch({
 		headless: process.env.NODE_ENV === "production",
 		args: ["--no-sandbox", "--disable-setuid-sandbox"],
