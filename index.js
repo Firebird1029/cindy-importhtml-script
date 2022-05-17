@@ -10,18 +10,29 @@
  * 		https://brianchildress.co/modify-puppeteer-user-agent/
  * https://stackoverflow.com/questions/55237748/how-to-get-text-inside-div-in-puppeteer
  * https://stackoverflow.com/questions/52716109/puppeteer-page-waitfornavigation-timeout-error-handling
+ *
+ * DO NOT update p-queue!
+ * https://stackoverflow.com/questions/55192900/nodejs-http-request-queue
+ * https://www.npmjs.com/package/p-queue/v/6.6.2
  */
 
 const express = require("express");
 const app = express();
 
+const { default: PQueue } = require("p-queue");
+const queue = new PQueue({ concurrency: 1 });
+
 app.get("/", function (req, res) {
 	res.send("hello from brandon");
 });
 
+async function queueScraper(url) {
+	console.log("starting scrape: " + url);
+	return queue.add(() => runPuppeteer(url));
+}
+
 app.get("/scrape/:addr", async function (req, res) {
-	console.log("starting scrape: " + req.params.addr);
-	const result = await runPuppeteer(`https://www.zillow.com/homes/${req.params.addr}`);
+	const result = await queueScraper(`https://www.zillow.com/homes/${req.params.addr}`);
 	res.send(result);
 });
 
