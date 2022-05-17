@@ -20,6 +20,7 @@ app.get("/", function (req, res) {
 });
 
 app.get("/scrape/:addr", async function (req, res) {
+	console.log("starting scrape: " + req.params.addr);
 	const result = await runPuppeteer(`https://www.zillow.com/homes/${req.params.addr}`);
 	res.send(result);
 });
@@ -84,7 +85,7 @@ async function runPuppeteer(encodedUrl) {
 		args: ["--no-sandbox", "--disable-setuid-sandbox"],
 	});
 
-	let triesRemaining = 5;
+	let triesRemaining = 1;
 
 	while (triesRemaining > 0) {
 		const page = await browser.newPage();
@@ -111,5 +112,5 @@ async function runPuppeteer(encodedUrl) {
 
 	await browser.close();
 
-	return "?";
+	return "try again";
 }
