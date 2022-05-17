@@ -71,7 +71,7 @@ const res = require("express/lib/response");
 puppeteer.use(StealthPlugin());
 
 async function runPuppeteer(encodedUrl) {
-	const browser = await puppeteer.launch({ headless: false });
+	const browser = await puppeteer.launch({ headless: process.env.NODE_ENV === "production" });
 
 	let triesRemaining = 5;
 
