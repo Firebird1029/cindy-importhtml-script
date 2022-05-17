@@ -90,7 +90,9 @@ const res = require("express/lib/response");
 puppeteer.use(StealthPlugin());
 
 async function runPuppeteer(encodedUrl) {
-	console.log("starting scrape: " + encodedUrl);
+	console.log(
+		"starting scrape: " + encodedUrl + " // queue size: " + queue.size + ", queue pending: " + queue.pending
+	);
 
 	const browser = await puppeteer.launch({
 		headless: process.env.NODE_ENV === "production",
