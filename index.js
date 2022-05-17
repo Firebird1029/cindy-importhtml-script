@@ -5,7 +5,7 @@ app.get("/", function (req, res) {
 	res.send("hello from brandon");
 });
 
-app.get("*", async function (req, res) {
+app.get("/https:/*", async function (req, res) {
 	console.log(req.url.substring(req.url.indexOf("homedetails/") + "homedetails/".length, req.url.length));
 	console.log(req.url.substring(1, req.url.length));
 
@@ -23,6 +23,10 @@ app.get("*", async function (req, res) {
 		console.log(error);
 		res.send("error", eror);
 	}
+});
+
+app.get("*", function (req, res) {
+	res.send("hello from brandon -- check the URL for any errors :)");
 });
 
 app.listen(process.env.PORT || 3000, function () {
